@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
-import { AlertTriangle, BookOpen, CheckCircle2, Download, Heart, LibraryBig, Settings, Sparkles, Swords, Upload } from "lucide-react";
+import { AlertTriangle, BookOpen, CheckCircle2, Download, Heart, LibraryBig, Settings, Sparkles, Swords, Trash2, Upload } from "lucide-react";
 import type { MezastarTag } from "./types";
 import { AlbumView } from "./components/AlbumView";
 import { CatalogueBrowser } from "./components/CatalogueBrowser";
 import { UnknownTagForm } from "./components/UnknownTagForm";
 import { BattleSetup } from "./components/BattleSetup";
-import { createBinderBackup, loadBinderTags, restoreBinderBackup, saveBinderTags } from "./services/db";
+import { clearBinderCollection, createBinderBackup, loadBinderTags, restoreBinderBackup, saveBinderTags } from "./services/db";
 
 type Screen = "binder" | "catalogue" | "unknown" | "battle" | "settings";
 
@@ -138,6 +138,20 @@ export default function App() {
     }
   };
 
+  const deleteCollection = async () => {
+    const confirmed = window.confirm(
+      `Delete your collection from this device?\n\nThis removes ${ownedCopyCount} owned tag${ownedCopyCount === 1 ? "" : "s"} and ${needsMatchCount} manually added tag${needsMatchCount === 1 ? "" : "s"}. The 420-tag catalogue will remain available. This cannot be undone unless you exported a backup.`,
+    );
+    if (!confirmed) return;
+
+    try {
+      setTags(await clearBinderCollection());
+      setBackupStatus({ kind: "success", message: "Collection deleted from this device. The catalogue is still available." });
+    } catch (error) {
+      setBackupStatus({ kind: "error", message: error instanceof Error ? error.message : "Could not delete the collection." });
+    }
+  };
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#0a0510] font-sans text-white selection:bg-purple-600/30">
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-40">
@@ -241,6 +255,20 @@ export default function App() {
                   <span>{backupStatus.message}</span>
                 </div>
               )}
+            </div>
+            <div className="mt-6 rounded-3xl border border-rose-300/20 bg-rose-500/5 p-5">
+              <div className="text-[10px] font-mono font-black uppercase tracking-widest text-rose-200/70">Delete local collection</div>
+              <p className="mt-2 text-sm leading-relaxed text-white/55">
+                Removes all owned quantities and manually added tags from this device. The 420-tag catalogue stays available. Export a backup first if you may want to restore the collection later.
+              </p>
+              <button
+                type="button"
+                onClick={() => void deleteCollection()}
+                disabled={ownedCopyCount === 0 && needsMatchCount === 0}
+                className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-rose-300/30 bg-rose-500/10 px-4 py-3 text-sm font-black text-rose-100 transition hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Trash2 className="h-4 w-4" />Delete My Collection
+              </button>
             </div>
           </section>
         )}
