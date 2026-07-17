@@ -1,35 +1,36 @@
-# Tag Battle Home Arena — Phase A (Corrected Binder Base)
+# Mezastar Home Arena
 
-This project deliberately preserves the original Google AI Studio binder and horizontal tag-card visual system as its collection base.
+A local-first Progressive Web App for managing a Mezastar tag collection and playing two-player home battles on one phone or tablet.
 
-## Removed
-- AI Forge / Forging Oven
-- Gemini and API key requirements
-- Express server and `server.ts`
-- scanner console and mock battle console
-- destructive reset controls
+## Included
 
-## Kept visually
-- Binder compartments
-- Horizontal collectible tag cards
-- Pokémon artwork presentation
-- Rarity colours, type pills, energy-style value, stars, front/back flip
-- Search and filters
+- 420 verified catalogue identities from Version 1 through Galaxy Version 2
+- Local collection quantities and unknown-tag matching
+- Three-round two-player battle flow
+- Tap Race, Battle Wheel, Rainbow Charge and Double Strike challenge
+- Pokémon-style type effectiveness and persistent team HP
+- Round battle music, sound effects and victory celebration
+- IndexedDB storage with JSON backup and restore
+- Installable PWA with offline app-shell support
 
-## Data note
-The included library is a fixture/demo catalogue. Its values are not asserted to be official Mezastar machine stats. The next phase should add a source-traceable catalogue import and map visible tag details carefully.
+Catalogue codes, Pokémon identities and rarity groups are source-traceable. Home Arena energy, move-power and preview stats are balancing values and are not presented as official arcade machine values.
 
-## Run
+## Development
+
 ```bash
 npm install
 npm run dev
 ```
 
-## Check
+## Validation
+
 ```bash
 npm run lint
 npm run build
 ```
 
-## Storage
-Owned/unowned selection is stored locally in IndexedDB under `tag-battle-home-arena`.
+## Phone installation
+
+After GitHub Pages deployment, open `https://woeichia.github.io/mezastar-home-arena/` on the phone. Use **Add to Home Screen** on iPhone Safari or **Install app** on Android Chrome.
+
+Collection data stays in that browser/device. Export a JSON backup before clearing browser storage, uninstalling the PWA or changing phones.
