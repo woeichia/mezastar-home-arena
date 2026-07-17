@@ -225,6 +225,27 @@ export async function saveBinderTags(tags: MezastarTag[]): Promise<void> {
   }
 }
 
+export async function clearBinderCollection(): Promise<MezastarTag[]> {
+  const db = await openDatabase();
+  try {
+    await ensureV6Migration(db);
+    await ensureRetiredFixtureCleanup(db);
+
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction([COLLECTION_STORE, CUSTOM_TAG_STORE], "readwrite");
+      transaction.objectStore(COLLECTION_STORE).clear();
+      transaction.objectStore(CUSTOM_TAG_STORE).clear();
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error ?? new Error("Unable to clear local collection"));
+      transaction.onabort = () => reject(transaction.error ?? new Error("Clearing the local collection was aborted"));
+    });
+
+    return await composeBinderTags(db);
+  } finally {
+    db.close();
+  }
+}
+
 export function createBinderBackup(tags: MezastarTag[]) {
   const backup: BinderBackup = {
     format: "tag-battle-home-arena-backup",
